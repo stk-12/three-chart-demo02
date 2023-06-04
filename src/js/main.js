@@ -53,9 +53,17 @@ class Main {
   }
 
   _setGui() {
+    const chartGuiObj = {
+      createChart: ()=> {
+        this._deleteMesh();
+        this._addMesh();
+      }
+    }
     this.gui.add(this.data[0], 'value').min(0).max(100).name('value 1').onChange(this._updateMesh);
     this.gui.add(this.data[1], 'value').min(0).max(100).name('value 2').onChange(this._updateMesh);
     this.gui.add(this.data[2], 'value').min(0).max(100).name('value 3').onChange(this._updateMesh);
+
+    this.gui.add(chartGuiObj, 'createChart').name('グラフを生成').listen()
   }
 
   _setControlls() {
@@ -103,11 +111,11 @@ class Main {
     }
   }
 
-  _updateMesh() {
-    // for (let i = 0; i < this.data.length; i++) {
-    //   const { value, color } = this.data[i];
-    // }
+  _deleteMesh() {
+    this.sectorsGroup.remove(...this.sectorsGroup.children);
   }
+
+  
 
   _init() {
     this._setCamera();
