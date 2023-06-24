@@ -8,11 +8,16 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
 class Main {
   constructor() {
     this.data = [
-      { value: 55, color: 0x006243 },
-      { value: 25, color: 0x1a915d },
-      { value: 10, color: 0x56c278 },
+      { value: 25, color: 0x006243 },
+      { value: 10, color: 0x1a915d },
+      { value: 30, color: 0x56c278 },
     ];
+    this.size = {
+      radius: 80,
+      height: 20,
+    }
     this.sectorsGroup = new THREE.Group();
+    this.sectorsGroup.rotation.x += radian(-140);
 
     this.viewport = {
       width: window.innerWidth,
@@ -96,18 +101,50 @@ class Main {
       // セクターを作成
       const material = new THREE.MeshToonMaterial({ color: color, side: THREE.DoubleSide });
       // const sectorGeometry = new THREE.CircleGeometry(50, 32, startAngle, angleRadians);
-      const sectorGeometry = new THREE.CylinderGeometry(80, 80, 20, 32, 32, false, startAngle, angleRadians);
+      const sectorGeometry = new THREE.CylinderGeometry(this.size.radius, this.size.radius, this.size.height, 32, 32, false, startAngle, angleRadians);
+      // const sectorGeometry = new THREE.CylinderGeometry(this.size.radius, this.size.radius, this.size.height, 32, 32, true, startAngle, angleRadians);
       const sectorMesh = new THREE.Mesh(sectorGeometry, material);
 
-      sectorMesh.rotation.x += radian(-140); //反転させるために回転
-      // sectorMesh.scale.y += 20;
-      // sectorMesh.scale.y += 20;
+      // 側面用メッシュを作成
+      const sideGeometory = new THREE.PlaneGeometry(this.size.radius, this.size.height);
+      const sideMesh = new THREE.Mesh(sideGeometory, material);
+
+      if(i === 0) {
+        let rad = angleRadians - radian(90);
+        sideMesh.rotation.y = angleRadians - radian(90);
+
+        let x = this.size.radius * 0.5 * Math.cos(rad);
+        let z = this.size.radius * 0.5 * Math.sin(rad);
+
+        sideMesh.position.x += x;
+        sideMesh.position.z -= z;
+
+      } else {
+        let rad = startAngle + angleRadians - radian(90);
+
+        sideMesh.rotation.y = startAngle + angleRadians - radian(90);
+
+        let x = this.size.radius * 0.5 * Math.cos(rad);
+        let z = this.size.radius * 0.5 * Math.sin(rad);
+
+        sideMesh.position.x += x;
+        sideMesh.position.z -= z;
+      }
+
+
+      // sectorMesh.rotation.x += radian(-140); //反転させるために回転
+
       
 
       // セクターをシーンに追加
       this.sectorsGroup.add(sectorMesh);
 
+      // 側面を追加
+      this.sectorsGroup.add(sideMesh);
+
       startAngle += angleRadians; // 開始角度を更新
+
+      this._scaleMesh();
     }
   }
 
@@ -115,7 +152,11 @@ class Main {
     this.sectorsGroup.remove(...this.sectorsGroup.children);
   }
 
-  
+  _scaleMesh() {
+    // for (let i = 0; i < this.data.length; i++) {
+    //   const { value, color } = this.data[i];
+    // }
+  }
 
   _init() {
     this._setCamera();
