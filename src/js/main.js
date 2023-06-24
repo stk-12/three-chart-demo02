@@ -110,6 +110,8 @@ class Main {
       const sideMesh = new THREE.Mesh(sideGeometory, material);
 
       if(i === 0) {
+        
+
         let rad = angleRadians - radian(90);
         sideMesh.rotation.y = angleRadians - radian(90);
 
@@ -118,6 +120,12 @@ class Main {
 
         sideMesh.position.x += x;
         sideMesh.position.z -= z;
+
+        // 開始側面メッシュ
+        const sideFirstMesh = new THREE.Mesh(sideGeometory, material);
+        sideFirstMesh.rotation.y = startAngle - radian(90);
+        sideFirstMesh.position.z += this.size.radius * 0.5;
+        this.sectorsGroup.add(sideFirstMesh);
 
       } else {
         let rad = startAngle + angleRadians - radian(90);
@@ -140,7 +148,9 @@ class Main {
       this.sectorsGroup.add(sectorMesh);
 
       // 側面を追加
-      this.sectorsGroup.add(sideMesh);
+      if(this.data[i].value !== 0) {
+        this.sectorsGroup.add(sideMesh);
+      }
 
       startAngle += angleRadians; // 開始角度を更新
 
